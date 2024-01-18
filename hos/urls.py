@@ -1,14 +1,18 @@
 from django.urls import path
 from . import views
-from .views import MyHospitalView,HospitalByNameView,HospitalsByDepartmentView,PatientCreateView, VisitedListView , PatientUpdateView
-
+#from .views import MyHospitalView,HospitalByNameView,HospitalsByDepartmentView,PatientCreateView, VisitedListView ,PatientUpdateView
+#from .views import MyHospitalView,HospitalsByDepartmentView,PatientCreateView, VisitedListView ,PatientUpdateView
+#from .views import MyHospitalView,HospitalsByDepartmentView,PatientCreateView,PatientUpdateView
+from .views import MyHospitalView,HospitalsByDepartmentView,PatientCreateView
 app_name = 'hos'
 urlpatterns = [
     
+
+    #path('api/hospitals_by_name/<str:name>/' , HospitalByNameView.as_view() , name='api_hospitals_by_name'),#comment this 
     path('api/hospitals_by_department/<str:department_name>/', HospitalsByDepartmentView.as_view(), name='api_hospitals_by_department'),
-    
-
-
+    # in the above url you are passing str:department_name , so in the function definition the argument has to be department_name only
+    path('api/hospitals_by_department/' , HospitalsByDepartmentView.as_view() , name = 'create_dept'),
+    path('api/hospitals_by_department/<str:department_name>/' , HospitalsByDepartmentView.as_view() , name='delete dept'),
 
 
     
@@ -16,6 +20,7 @@ urlpatterns = [
     path('api/hospitals/<str:hospital_name>/', MyHospitalView.as_view(), name='api_update_hospital'),
     path('api/hospitals/<str:hospital_name>/', MyHospitalView.as_view(), name='api_delete_hospital'),
     path('hos_all/', MyHospitalView.as_view(), name='hospital-list'),
+    path('hos_all/<str:hospital_name>/' , MyHospitalView.as_view() , name='indi_hos'),
     
     
 
@@ -24,10 +29,18 @@ urlpatterns = [
 
 
 
-    
+    #path('patients/' , PatientCreateUpdateView.as_view() , name='patient-create'),
+   # path('patient/<str:mobile_number>/' , PatientCreateUpdateView.as_view() , name='patient-update'),
     path('patients/', PatientCreateView.as_view(), name='patient-create'),
-    path('visited/<str:mobile_number>/', VisitedListView.as_view(), name='visited-list'),
-    path('patients/<str:mobile_number>/', PatientUpdateView.as_view(), name='patient-update'),
+    #path('visited/<str:mobile_number>/', VisitedListView.as_view(), name='visited-list'),
+    #path('visited/<str:mobile_number>/', PatientUpdateView.as_view(), name='visited-list'),
+#    path('patients/<str:mobile_number>/', PatientUpdateView.as_view(), name='patient-update'),   ##### original
+    path('patients/<str:mobile_number>/<str:patient_name>/' , PatientCreateView.as_view() , name='update pat'),
+
+#dont use str
+
+    #path('patients/<str:mobile_number>/', PatientCreateView.as_view(), name='patient-update'),
+   # path('patients/', PatientCreateView.as_view(), name='patient-create'),
 
 ]
 
@@ -52,6 +65,19 @@ put this in body
     "name": "New new Hospital",
     "address": "123 new Main Street",
     "department_name": "heart"
+}
+
+
+
+
+
+
+
+put the below dept shud be a key
+{
+    "name": "Nel",
+    "address": "123 new Main Street",
+    "department": [4]
 }
 '''
 #for put as in update a hospital 

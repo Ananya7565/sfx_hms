@@ -6,18 +6,21 @@ from .models import Hospital,Department,Patient,Visited
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
-        fields = ['department_id', 'name']
+        #fields = ['department_id', 'name']
+        fields = '__all__'
+    #def __str__
     
 
     
 class HospitalSerializer(serializers.ModelSerializer):
       
-    departments = DepartmentSerializer(many=True, read_only=True, source='department_set')
+    #departments = DepartmentSerializer(many=True, read_only=True, source='department_set')
     
     class Meta:
         model = Hospital
-        fields = ['id', 'name', 'address','departments']
-
+        fields = '__all__'
+        # fields = ['id', 'name', 'address','departments']
+'''
     def create(self, validated_data):
         department_name = validated_data.pop('department_name', None)
         if department_name:
@@ -29,9 +32,10 @@ class HospitalSerializer(serializers.ModelSerializer):
 
         return hospital
         
+        '''
 
 
-
+'''
 
 class VisitedSerializer(serializers.ModelSerializer):
     patient = serializers.CharField(source='patient.mobile_number')
@@ -48,14 +52,26 @@ class VisitedSerializer(serializers.ModelSerializer):
             'address': obj.hospital.address,
             'departments': [department.name for department in obj.hospital.department.all()]
         }
+    
+'''
+class VisitedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Visited
+        fields = '__all__'
+
+
 
 class PatientCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = '__all__'
 
+
+
+'''
 class PatientUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = '__all__'
         read_only_fields = ('mobile_number',)
+'''
