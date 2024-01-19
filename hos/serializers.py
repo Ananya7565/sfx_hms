@@ -1,7 +1,10 @@
 # serializers.py
+import datetime
+from xml.dom import ValidationErr
 from rest_framework import serializers
-from .models import Hospital,Department,Patient,Visited
-
+from .models import Hospital,Department,Patient,Visited,Doctor
+from django.utils import timezone
+from rest_framework.response import Response
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,15 +61,44 @@ class VisitedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Visited
         fields = '__all__'
-
-
+        read_only_fields = ('patient', 'hospital' , 'doctor' , 'department' , 'status' , )
+    def validate_date_and_time(self, value):         # the functio name has to be validat_<field_name>
+        # Here i am validating the date and time fields 
+        if value < timezone.now():
+            raise serializers.ValidationError("Appointment date must be in the future.")
+        max_allowed_date = timezone.now() + datetime.timedelta(weeks=2)
+        if value > max_allowed_date:
+            raise serializers.ValidationError("Appointment date must be within the next 2 weeks.")
+        return value
+    
 
 class PatientCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = '__all__'
+        
+    def validate_date_of_birth(self,value):
+        if isinstance(value, str):
+            value = datetime.strptime(value, '%Y-%m-%d').date()
 
+        # Calculate age based on the provided date of birth
+        age = (datetime.date.today() - value).days // 365
 
+        # Validate that the age is less than or equal to 150 and not negative
+        if age > 150:
+            raise serializers.ValidationError("Date of birth cant make you more than 150")
+        if age<0:
+            raise serializers.ValidationError("Date if birth cant be a future date")
+
+        return value
+    
+
+class DoctorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = '__all__'
+
+    #def validate_mobile_number(mobile_number)
 
 '''
 class PatientUpdateSerializer(serializers.ModelSerializer):

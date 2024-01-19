@@ -3,22 +3,22 @@ from . import views
 #from .views import MyHospitalView,HospitalByNameView,HospitalsByDepartmentView,PatientCreateView, VisitedListView ,PatientUpdateView
 #from .views import MyHospitalView,HospitalsByDepartmentView,PatientCreateView, VisitedListView ,PatientUpdateView
 #from .views import MyHospitalView,HospitalsByDepartmentView,PatientCreateView,PatientUpdateView
-from .views import MyHospitalView,HospitalsByDepartmentView,PatientCreateView
+from .views import MyHospitalView,HospitalsByDepartmentView,PatientCreateView,Appointment,DoctorsInDept
 app_name = 'hos'
 urlpatterns = [
     
 
-    #path('api/hospitals_by_name/<str:name>/' , HospitalByNameView.as_view() , name='api_hospitals_by_name'),#comment this 
-    path('api/hospitals_by_department/<str:department_name>/', HospitalsByDepartmentView.as_view(), name='api_hospitals_by_department'),
+    
+    path('api/hospitals_by_department/<int:department_id>/', HospitalsByDepartmentView.as_view(), name='get_hospitals_of_this_dept'),
     # in the above url you are passing str:department_name , so in the function definition the argument has to be department_name only
     path('api/hospitals_by_department/' , HospitalsByDepartmentView.as_view() , name = 'create_dept'),
-    path('api/hospitals_by_department/<str:department_name>/' , HospitalsByDepartmentView.as_view() , name='delete dept'),
+    path('api/hospitals_by_department/<int:department_id>/' , HospitalsByDepartmentView.as_view() , name='delete dept'),
 
 
     
     path('api/hospitals/', MyHospitalView.as_view(), name='api_create_hospital'),
-    path('api/hospitals/<str:hospital_name>/', MyHospitalView.as_view(), name='api_update_hospital'),
-    path('api/hospitals/<str:hospital_name>/', MyHospitalView.as_view(), name='api_delete_hospital'),
+    path('api/hospitals/<int:hospital_id>/', MyHospitalView.as_view(), name='api_update_hospital'),
+    path('api/hospitals/<int:hospital_id>/', MyHospitalView.as_view(), name='api_delete_hospital'),
     path('hos_all/', MyHospitalView.as_view(), name='hospital-list'),
     path('hos_all/<str:hospital_name>/' , MyHospitalView.as_view() , name='indi_hos'),
     
@@ -29,18 +29,32 @@ urlpatterns = [
 
 
 
-    #path('patients/' , PatientCreateUpdateView.as_view() , name='patient-create'),
-   # path('patient/<str:mobile_number>/' , PatientCreateUpdateView.as_view() , name='patient-update'),
+   
     path('patients/', PatientCreateView.as_view(), name='patient-create'),
-    #path('visited/<str:mobile_number>/', VisitedListView.as_view(), name='visited-list'),
-    #path('visited/<str:mobile_number>/', PatientUpdateView.as_view(), name='visited-list'),
-#    path('patients/<str:mobile_number>/', PatientUpdateView.as_view(), name='patient-update'),   ##### original
-    path('patients/<str:mobile_number>/<str:patient_name>/' , PatientCreateView.as_view() , name='update pat'),
+    path('patients/<int:patient_id>/' , PatientCreateView.as_view() , name='update pat'),
+    path('patients/<int:patient_id>/' , PatientCreateView.as_view() , name='delete-patient'),
+    path('patients/<str:mobile_number>/' , PatientCreateView.as_view() , name='patient-get-mobile_number'),
 
 #dont use str
 
-    #path('patients/<str:mobile_number>/', PatientCreateView.as_view(), name='patient-update'),
-   # path('patients/', PatientCreateView.as_view(), name='patient-create'),
+   
+
+
+
+
+   path('appointment/' ,Appointment.as_view() , name='create-appointment'),
+   path('appointment/<int:appointment_id>/' , Appointment.as_view() , name='update-appointment'),
+   path('appointment/<int:appointment_id>/' , Appointment.as_view() , name='delete-appointment'),
+   path('appointment/<str:mobile_number>/' , Appointment.as_view() , name='get-appointment'),
+
+
+
+
+
+
+
+
+   path('doc/<int:department_id>/' , DoctorsInDept.as_view() , name='get-doctors-in-dept'),
 
 ]
 
@@ -50,85 +64,118 @@ urlpatterns = [
 
 
 
-
-#http://127.0.0.1:8000/hos/api/hospitals_by_name/skin_hos/  ------------------------->  
-#[{"id":1,"name":"skin_hos","address":"road","department":{"id":1,"name":"skin"}},{"id":2,"name":"skin_hos","address":"road","department":{"id":2,"name":"heart"}}]
-#http://127.0.0.1:8000/hos/api/hospitals_by_department/leg/
-#[{"id":3,"name":"leg_hos","address":"qwe_road","department":{"id":3,"name":"leg"}},{"id":4,"name":"new_leg_hos","address":"new_leg_road","department":{"id":3,"name":"leg"}}]
-#http://127.0.0.1:8000/hos/hos_all/
-#returns details of all the hospitals
-#for post, as in creating new hospital with post 
-#put this in postman url http://localhost:8000/hos/api/hospitals/
 '''
-put this in body
+
+###############################################################   DEPARTMENT URLS    ##################################################
+GET  -   gets list of hospitals of department id 2
+http://localhost:8000/hos/api/hospitals_by_department/2/
+
+
+POST -  creates a new department
+http://localhost:8000/hos/api/hospitals_by_department/
+REQUEST BODY
 {
-    "name": "New new Hospital",
-    "address": "123 new Main Street",
-    "department_name": "heart"
+    "department_name" : "motherhood"
+}
+
+DELETE - deletes department of id 7
+http://localhost:8000/hos/api/hospitals_by_department/7/
+
+
+################################################################   HOSPITAL URLS      ###################################################
+POST - creates a new hospital
+http://localhost:8000/hos/api/hospitals/
+REQUEST BODY
+{
+    "hospital_name" : "Ananya_hos",
+    "address" : "Ananya Road",
+    "department" : [5]
 }
 
 
-
-
-
-
-
-put the below dept shud be a key
+PUT - Updates details of hospital id 11
+http://localhost:8000/hos/api/hospitals/11/
+REQUEST BODY
 {
-    "name": "Nel",
-    "address": "123 new Main Street",
-    "department": [4]
+    "hospital_name" : "Ananya_hos",
+    "address" : "Ananya New Road",
+    "department" : [5]
 }
-'''
-#for put as in update a hospital 
-#put this in postman http://localhost:8000/hos/api/hospitals/New new Hospital/    ----------here New new Hospital is the name of hospital we want to update
-'''
-put this in request body
 
-you can change the name,address or department
+
+DELETE - Deletes hospital of id 11
+http://localhost:8000/hos/api/hospitals/11/
+
+GET - gets a list of all the hospitals
+http://localhost:8000/hos/hos_all/
+
+GET - gets the details of all hospitals with name q_hos
+http://localhost:8000/hos/hos_all/q_hos/
+
+
+###################################################################   PATIENT URLS       ##################################################
+POST - Creates a new patient
+http://localhost:8000/hos/patients/
+REQUEST BODY 
 {
-    "name": "new new new new",
-    "address": "new add",
-    "department_name": "leg" 
+    "patient_name" : "Ananya",
+    "date_of_birth" : "2002-01-02",
+    "mobile_number" : "9686454642" ,
+    "gender" : "female"
 }
-suppose i add a dept which doesnt exist ill get error 
-'''
-# for delete if you put hti sin postman url http://localhost:8000/hos/api/hospitals/new new new new/
-#it will delete hospital new new new new
 
-
-
-
-
-#if you use the below api post call a new patient is created
-#http://localhost:8000/hos/patients/
-#below is example body
-'''
+PUT - Updates patient with id 26
+http://localhost:8000/hos/patients/26/
+REQUEST BODY
 {
-    "name": "John Doe",
-    "date_of_birth": "1990-01-01",
-    "mobile_number": "1234567890",
-    "gender": "male",
-    "doctor_name": "Dr. Smith",
-    "hospital":3,
-    "status": "admitted"
+    "patient_name" : "Ananya",
+    "date_of_birth" : "2002-11-02",
+    "mobile_number" : "9686454642" ,
+    "gender" : "female"
 }
-'''
 
-#when you put the below api in chrome url you get visited details of patient 
-# http://localhost:8000/hos/visited/1234567890/
-# this is the output 
-# [{"visited_id":1,"date_and_time":"2024-01-10T11:50:10.426309Z","patient":"1234567890"},{"visited_id":2,"date_and_time":"2024-01-10T11:50:10.439314Z","patient":"1234567890"}]
-#if u put this in postman put http://localhost:8000/hos/patients/1234567890/
-'''
+GET - gets patient with mobile number 9686454642
+http://localhost:8000/hos/patients/"9686454642"/
+
+DELETE - deletes patient with id 26
+http://localhost:8000/hos/patients/26/
+
+
+###################################################################  APPOINTMENT URLS     #################################################
+POST - create a new appointment
+http://localhost:8000/hos/appointment/
+REQUEST BODY 
 {
-   "name": "Doe",
-    "date_of_birth": "1990-01-01",
-    "mobile_number": "1234567890",
-    "gender": "male",
-    "doctor_name": "Dr. Smith",
-    "hospital":3,
-    "status": "admitted"
+    "patient" : 1,
+    "date_and_time" : "2024-01-20 11:30:32.927588",
+    "hospital" : 1,
+    "doctor" : 1,
+    "department" : 2,
+    "status" : "primary check"
 }
+
+PUT - only the date and time field of appointment id 17 can be updated
+http://localhost:8000/hos/appointment/17/
+REQUEST BODY
+{
+    "patient" : 2,
+    "date_and_time" : "2024-01-22 11:30:32.927588",
+    "hospital" : 1,
+    "doctor" : 1,
+    "department" : 2,
+    "status" : "secondary check"
+}
+
+GET - gets appointment history of patient with mobile number 6666666665
+http://localhost:8000/hos/appointment/"6666666665"/
+
+DELETE - deletes appointment with id 9
+http://localhost:8000/hos/appointment/9/
+
+
+###################################################################    DOCTOR URLS       ##################################################
+GET  -  gets list of doctors with department id 2
+http://localhost:8000/hos/doc/2/
+
+
 '''
-#then entry is added to visited table not patient. patient is updated
