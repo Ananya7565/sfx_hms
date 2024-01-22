@@ -1,73 +1,43 @@
 from django.urls import path
 from . import views
-#from .views import MyHospitalView,HospitalByNameView,HospitalsByDepartmentView,PatientCreateView, VisitedListView ,PatientUpdateView
-#from .views import MyHospitalView,HospitalsByDepartmentView,PatientCreateView, VisitedListView ,PatientUpdateView
-#from .views import MyHospitalView,HospitalsByDepartmentView,PatientCreateView,PatientUpdateView
 from .views import MyHospitalView,HospitalsByDepartmentView,PatientCreateView,Appointment,DoctorsInDept
 app_name = 'hos'
 urlpatterns = [
-    
 
-    
+    # DEPARTMENT URLS
     path('api/hospitals_by_department/<int:department_id>/', HospitalsByDepartmentView.as_view(), name='get_hospitals_of_this_dept'),
     # in the above url you are passing str:department_name , so in the function definition the argument has to be department_name only
     path('api/hospitals_by_department/' , HospitalsByDepartmentView.as_view() , name = 'create_dept'),
     path('api/hospitals_by_department/<int:department_id>/' , HospitalsByDepartmentView.as_view() , name='delete dept'),
 
-
-    
+    # HOSPITAL URLS
     path('api/hospitals/', MyHospitalView.as_view(), name='api_create_hospital'),
     path('api/hospitals/<int:hospital_id>/', MyHospitalView.as_view(), name='api_update_hospital'),
     path('api/hospitals/<int:hospital_id>/', MyHospitalView.as_view(), name='api_delete_hospital'),
     path('hos_all/', MyHospitalView.as_view(), name='hospital-list'),
     path('hos_all/<str:hospital_name>/' , MyHospitalView.as_view() , name='indi_hos'),
     
-    
-
-
-
-
-
-
-   
+    # PATIENT URLS
     path('patients/', PatientCreateView.as_view(), name='patient-create'),
     path('patients/<int:patient_id>/' , PatientCreateView.as_view() , name='update pat'),
     path('patients/<int:patient_id>/' , PatientCreateView.as_view() , name='delete-patient'),
     path('patients/<str:mobile_number>/' , PatientCreateView.as_view() , name='patient-get-mobile_number'),
 
-#dont use str
+    # APPOINTMENT URLS
+    path('appointment/' ,Appointment.as_view() , name='create-appointment'),
+    path('appointment/<int:appointment_id>/' , Appointment.as_view() , name='update-appointment'),
+    path('appointment/<int:appointment_id>/' , Appointment.as_view() , name='delete-appointment'),
+    path('appointment/<str:mobile_number>/' , Appointment.as_view() , name='get-appointment'),
 
-   
-
-
-
-
-   path('appointment/' ,Appointment.as_view() , name='create-appointment'),
-   path('appointment/<int:appointment_id>/' , Appointment.as_view() , name='update-appointment'),
-   path('appointment/<int:appointment_id>/' , Appointment.as_view() , name='delete-appointment'),
-   path('appointment/<str:mobile_number>/' , Appointment.as_view() , name='get-appointment'),
-
-
-
-
-
-
-
-
-   path('doc/<int:department_id>/' , DoctorsInDept.as_view() , name='get-doctors-in-dept'),
+    # DOCTOR URLS
+    path('doc/<int:department_id>/' , DoctorsInDept.as_view() , name='get-doctors-in-dept'),
 
 ]
-
-
-
-
-
-
 
 '''
 
 ###############################################################   DEPARTMENT URLS    ##################################################
-GET  -   gets list of hospitals of department id 2
+GET  -   gets list of hospitals with department id 2
 http://localhost:8000/hos/api/hospitals_by_department/2/
 
 

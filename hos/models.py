@@ -19,24 +19,17 @@ class Patient(models.Model):
         regex=r'^[1-9]\d{9}$',
         message='The phone number you are providing is invalid make sure it is atleast 10 digits and doesnt start with 0'
     )
-
     GENDER_CHOICES = [
         ('male', 'Male'),
         ('female', 'Female'),
         ('other', 'Other'),
     ]
-   
-
     patient_name = models.CharField(max_length=255)
     date_of_birth = models.DateField()
     mobile_number = models.CharField(max_length=10  , validators=[phone_number_validator])
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     created_date_time = models.DateTimeField(auto_now_add=True)
-    #doctor_name = models.CharField(max_length=255)
-   # hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
-   # status = models.CharField(max_length=30, choices=STATUS_CHOICES)
-
-    #primary id not phone
+    #primary key not phone
     def __str__(self):
         return f"{self.patient_name}"
     
@@ -48,7 +41,6 @@ class Doctor(models.Model):
         return f"{self.doctor_name}"
     
 class Visited(models.Model):
-    #visited_id = models.AutoField(primary_key=True)
     STATUS_CHOICES = [
         ('admitted' , 'Admitted'),
         ('release' , 'Release'),
